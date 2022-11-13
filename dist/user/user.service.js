@@ -19,10 +19,13 @@ const mongoose_2 = require("mongoose");
 const phone_registration_service_1 = require("../phone-regesteration/phone-registration.service");
 const api_error_1 = require("../shared/api-error");
 const constants_1 = require("../shared/constants");
+const bycrbt = require("bcryptjs");
+const jwt_1 = require("@nestjs/jwt");
 let UserService = class UserService {
-    constructor(_userModel, _phoneService) {
+    constructor(_userModel, _phoneService, jwtService) {
         this._userModel = _userModel;
         this._phoneService = _phoneService;
+        this.jwtService = jwtService;
     }
     async create(body) {
         if (body.phone) {
@@ -31,8 +34,14 @@ let UserService = class UserService {
         if (body.email) {
             await this.checkEmailDuplication(body.email);
         }
+        body.password = await bycrbt.hash(body.password, 12);
         const user = await this._userModel.create(Object.assign({}, body));
-        return user;
+        const token = this.jwtService.sign({
+            name: user.name,
+            _id: user._id,
+            loginAs: constants_1.AppRoles.USER
+        });
+        return { user, accessToken: token };
     }
     async checkPhone(phone) {
         const phoneRegistration = await this._phoneService.findOne(phone);
@@ -46,12 +55,19 @@ let UserService = class UserService {
             throw api_error_1.ApiErrors.BadRequest({ message: "this email already in use" });
         }
     }
+    async findOne(query) {
+        console.log(query);
+        const user = await this._userModel.findOne(query);
+        console.log("🚀 ~ file: user.service.ts ~ line 48 ~ UserService ~ findOne ~ user", user);
+        return user;
+    }
 };
 UserService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, mongoose_1.InjectModel)(constants_1.DataBaeModelName.USER_MODEL)),
     __metadata("design:paramtypes", [mongoose_2.Model,
-        phone_registration_service_1.PhoneRegistrationService])
+        phone_registration_service_1.PhoneRegistrationService,
+        jwt_1.JwtService])
 ], UserService);
 exports.UserService = UserService;
 //# sourceMappingURL=user.service.js.map

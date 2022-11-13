@@ -15,6 +15,8 @@ const constants_1 = require("../shared/constants");
 const user_schema_1 = require("./schemas/user.schema");
 const mongoose_plugin_autoinc_fix_1 = require("mongoose-plugin-autoinc-fix");
 const phone_registration_module_1 = require("../phone-regesteration/phone-registration.module");
+const passport_1 = require("@nestjs/passport");
+const jwt_1 = require("@nestjs/jwt");
 let UserModule = class UserModule {
 };
 UserModule = __decorate([
@@ -35,6 +37,11 @@ UserModule = __decorate([
                 },
             ]),
             phone_registration_module_1.PhoneRegistrationModule,
+            passport_1.PassportModule,
+            jwt_1.JwtModule.register({
+                secret: constants_1.jwtConstants.secret,
+                signOptions: { expiresIn: "6000s" },
+            }),
         ],
         providers: [user_service_1.UserService],
         controllers: [user_controller_1.UserController],

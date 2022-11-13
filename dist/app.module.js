@@ -17,15 +17,24 @@ const filter_exceptions_1 = require("./shared/filter-exceptions");
 const user_module_1 = require("./user/user.module");
 const auth_module_1 = require("./auth/auth.module");
 const default_validation_1 = require("./shared/default-validation");
+const admin_module_1 = require("./admin/admin.module");
+const config_1 = require("@nestjs/config");
+const configurations_1 = require("./shared/configurations");
 let AppModule = class AppModule {
 };
 AppModule = __decorate([
     (0, common_1.Module)({
         imports: [
             mongoose_1.MongooseModule.forRoot("mongodb+srv://toqa:vDhZG3RgoBPLcHZR@cluster0.hlmg7.mongodb.net/hospitality?retryWrites=true&w=majority"),
+            config_1.ConfigModule.forRoot({
+                isGlobal: true,
+                cache: true,
+                load: [configurations_1.default],
+            }),
             phone_registration_module_1.PhoneRegistrationModule,
             user_module_1.UserModule,
             auth_module_1.AuthModule,
+            admin_module_1.AdminModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [

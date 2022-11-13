@@ -1,6 +1,7 @@
 export declare enum DataBaeModelName {
     PHONE_REGISTRATIONS = "phone-registrations",
-    USER_MODEL = "users"
+    USER_MODEL = "users",
+    ADMIN_MODEL = "admins"
 }
 export declare enum Errors {
     BadRequest = "BadRequest",
@@ -22,4 +23,11 @@ export declare enum HttpErrors {
     InternalServerError = 500,
     TooManyRequests = 429
 }
+export declare enum AppRoles {
+    ADMIN = "ADMIN",
+    USER = "USER"
+}
 export declare const APP_FILTER = "APP_FILTER";
+export declare const jwtConstants: {
+    secret: string;
+};

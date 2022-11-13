@@ -4,6 +4,7 @@ import { ApiConsumes, ApiTags } from "@nestjs/swagger";
 import { ImageInterceptor } from "src/shared/interceptors/image-interceptor";
 import { CreateUserDto } from "src/user/dtos/create-user.dto";
 import { AuthService } from "./auth.service";
+import { LoginDto } from "./dtos/login.dto";
 
 @Controller("auth")
 @ApiTags("Auth")
@@ -16,5 +17,10 @@ export class AuthController {
   @ApiConsumes("multipart/form-data")
   async signUp(@Body() body: CreateUserDto) {
     return await this._authService.signup(body);
+  }
+
+  @Post("/signIn")
+  async signIn(@Body() body: LoginDto) {
+    return await this._authService.login(body);
   }
 }

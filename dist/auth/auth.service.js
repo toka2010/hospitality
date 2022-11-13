@@ -11,18 +11,55 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthService = void 0;
 const common_1 = require("@nestjs/common");
+const constants_1 = require("../shared/constants");
 const user_service_1 = require("../user/user.service");
+const admin_service_1 = require("../admin/admin.service");
+const bycrpt = require("bcryptjs");
+const api_error_1 = require("../shared/api-error");
+const jwt_1 = require("@nestjs/jwt");
 let AuthService = class AuthService {
-    constructor(_userService) {
+    constructor(_userService, _adminService, jwtService) {
         this._userService = _userService;
+        this._adminService = _adminService;
+        this.jwtService = jwtService;
     }
     async signup(body) {
         return await this._userService.create(body);
     }
+    async login(dto) {
+        const user = dto.loginAs == constants_1.AppRoles.USER
+            ? await this._userService.findOne({
+                $or: [{ phone: dto.userName }, { email: dto.userName }],
+            })
+            : await this._adminService.findOne({
+                $or: [{ phone: dto.userName }, { email: dto.userName }],
+            });
+        if (user) {
+            const isMatch = await bycrpt.compare(dto.password, user.password);
+            if (!isMatch) {
+                throw api_error_1.ApiErrors.Unauthenticated({
+                    message: "Invalid username or password",
+                });
+            }
+            const token = this.jwtService.sign({
+                name: user.name,
+                _id: user._id,
+                loginAs: dto.loginAs,
+            });
+            return { user, accessToken: token };
+        }
+        else {
+            throw api_error_1.ApiErrors.Unauthenticated({
+                message: "Invalid username or password",
+            });
+        }
+    }
 };
 AuthService = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [user_service_1.UserService])
+    __metadata("design:paramtypes", [user_service_1.UserService,
+        admin_service_1.AdminMService,
+        jwt_1.JwtService])
 ], AuthService);
 exports.AuthService = AuthService;
 //# sourceMappingURL=auth.service.js.map

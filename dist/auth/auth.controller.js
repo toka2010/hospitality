@@ -19,12 +19,16 @@ const swagger_1 = require("@nestjs/swagger");
 const image_interceptor_1 = require("../shared/interceptors/image-interceptor");
 const create_user_dto_1 = require("../user/dtos/create-user.dto");
 const auth_service_1 = require("./auth.service");
+const login_dto_1 = require("./dtos/login.dto");
 let AuthController = class AuthController {
     constructor(_authService) {
         this._authService = _authService;
     }
     async signUp(body) {
         return await this._authService.signup(body);
+    }
+    async signIn(body) {
+        return await this._authService.login(body);
     }
 };
 __decorate([
@@ -37,6 +41,13 @@ __decorate([
     __metadata("design:paramtypes", [create_user_dto_1.CreateUserDto]),
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "signUp", null);
+__decorate([
+    (0, common_1.Post)("/signIn"),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [login_dto_1.LoginDto]),
+    __metadata("design:returntype", Promise)
+], AuthController.prototype, "signIn", null);
 AuthController = __decorate([
     (0, common_1.Controller)("auth"),
     (0, swagger_1.ApiTags)("Auth"),

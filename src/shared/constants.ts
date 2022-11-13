@@ -1,6 +1,7 @@
 export enum DataBaeModelName {
   PHONE_REGISTRATIONS = "phone-registrations",
-  USER_MODEL='users'
+  USER_MODEL = "users",
+  ADMIN_MODEL = "admins",
 }
 export enum Errors {
   BadRequest = "BadRequest",
@@ -24,4 +25,15 @@ export enum HttpErrors {
   TooManyRequests = 429,
 }
 
+export enum AppRoles {
+  ADMIN = "ADMIN",
+  USER = "USER",
+}
+
 export declare const APP_FILTER = "APP_FILTER";
+
+
+export const jwtConstants = {
+  secret: 'secretKey',
+};
+

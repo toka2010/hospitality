@@ -19,7 +19,7 @@ const mongoose_2 = require("mongoose");
 const api_error_1 = require("../shared/api-error");
 const constants_1 = require("../shared/constants");
 const generator = require("password-generator");
-const MY_SLACK_WEBHOOK_URL = "https://hooks.slack.com/services/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";
+const MY_SLACK_WEBHOOK_URL = "https://hooks.slack.com/services/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";
 let slack = require("slack-notify")(MY_SLACK_WEBHOOK_URL);
 let PhoneRegistrationService = class PhoneRegistrationService {
     constructor(_PhoneRegistrationModel) {
@@ -34,11 +34,11 @@ let PhoneRegistrationService = class PhoneRegistrationService {
             throw api_error_1.ApiErrors.Conflict({ message: "this phone is already verified" });
         }
         const otp = generator(4, false, /\d/);
-        this._slackNotifier(body.phone, otp);
+        await this._slackNotifier(body.phone, otp);
         await this._PhoneRegistrationModel.updateOne({ phone: body.phone }, { otp: otp }, { upsert: true });
     }
-    _slackNotifier(parsedPhone, code) {
-        slack.send({
+    async _slackNotifier(parsedPhone, code) {
+        await slack.send({
             channel: "#hospitality-message",
             text: ` user with phone : ${parsedPhone} , verifyCode is ${code}`,
             username: "hospitality Messaging Service",

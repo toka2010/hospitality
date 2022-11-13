@@ -2,10 +2,12 @@ import { Module } from "@nestjs/common";
 import { UserService } from "./user.service";
 import { UserController } from "./user.controller";
 import { MongooseModule } from "@nestjs/mongoose";
-import { DataBaeModelName } from "src/shared/constants";
+import { DataBaeModelName, jwtConstants } from "src/shared/constants";
 import { UserSchema } from "./schemas/user.schema";
 import { autoIncrement } from "mongoose-plugin-autoinc-fix";
 import { PhoneRegistrationModule } from "src/phone-regesteration/phone-registration.module";
+import { PassportModule } from "@nestjs/passport";
+import { JwtModule } from "@nestjs/jwt";
 
 @Module({
   imports: [
@@ -24,6 +26,11 @@ import { PhoneRegistrationModule } from "src/phone-regesteration/phone-registrat
       },
     ]),
     PhoneRegistrationModule,
+    PassportModule,
+    JwtModule.register({
+      secret: jwtConstants.secret,
+      signOptions: { expiresIn: "6000s" },
+    }),
   ],
   providers: [UserService],
   controllers: [UserController],
